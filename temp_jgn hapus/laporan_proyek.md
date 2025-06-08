@@ -35,6 +35,10 @@ Goals:
 
 Dataset Diabetes memuat informasi tentang individu yang didiagnosis menderita diabetes, mencakup atribut demografis, riwayat medis, dan hasil pengukuran klinis. Dataset ini menjadi sumber data yang berharga untuk mempelajari manajemen diabetes, faktor-faktor risiko, serta pembuatan model prediktif terhadap hasil penyakit.
 
+dataset ini memiliki 2768 baris dan baris kosong (null) seperti berikut: 1. Glucose: 18 2. BloodPressure: 128 3. SkinThickness: 810 4. Insulin: 1333 5. BMI: 35
+
+setelah dataset yang memiliki null dibersihkan (drop), terdapat jumlah 1424 baris dan 9 kolom tersisa
+
 [Diabetes] Link: [https://www.kaggle.com/datasets/ehababoelnaga/diabetes-dataset/data](https://www.kaggle.com/datasets/ehababoelnaga/diabetes-dataset/data).
 
 ### Variabel-variabel pada dataset adalah sebagai berikut:
@@ -76,43 +80,66 @@ Distribusi Data (Histogram atau KDE Plot)
 
 -   Manfaat: Informasi distribusi membantu dalam memilih teknik preprocessing (misalnya, normalisasi atau log transform) yang sesuai untuk meningkatkan kinerja model.
 
-## Data Preparation dan Rubrik/Kriteria Tambahan
+## Data Preparation
 
-Pemeriksaan dan Penanganan Missing Value
+Dalam tahap ini, dilakukan beberapa teknik persiapan data secara berurutan agar data siap digunakan untuk membangun model machine learning. Adapun teknik-teknik yang diterapkan dalam notebook dan laporan ini adalah sebagai berikut:
 
--   Proses: Mengecek apakah ada nilai 0 atau kosong pada kolom seperti Glucose, BloodPressure, SkinThickness, Insulin, dan BMI.
+1. Import Data
+   Dataset dibaca menggunakan pandas dan dimuat ke dalam DataFrame untuk memudahkan proses analisis dan manipulasi data.
 
--   Alasan: Kolom tersebut secara klinis tidak mungkin memiliki nilai nol (misalnya tekanan darah tidak mungkin 0), sehingga nilai tersebut dianggap sebagai missing value. Penanganan dilakukan dengan mengganti nilai 0 menggunakan median dari masing-masing kolom.
+2. Pemeriksaan Missing Values
+   Data diperiksa apakah terdapat nilai kosong (missing values) menggunakan .isnull().sum(). Jika ditemukan, baris atau kolom yang relevan dibersihkan atau diisi ulang (imputasi). imputasi menggunakan fungsi "dropna()" untuk menghapus baris (drop) pada baris yang terdapat nilai 0. Alasan karena Kolom tersebut secara klinis tidak mungkin memiliki nilai nol (misalnya tekanan darah tidak mungkin 0)
 
-Transformasi Logaritmik
+3. Pemeriksaan dan Penghapusan Outlier (IQR Method)
+   Untuk menjaga kualitas data dan menghilangkan data ekstrem yang dapat memengaruhi hasil analisis, dilakukan penghapusan outlier menggunakan metode IQR (Interquartile Range). IQR dihitung dengan mencari selisih antara kuartil ke-3 (Q3) dan kuartil ke-1 (Q1), lalu data di luar rentang [Q1 - 1.5*IQR, Q3 + 1.5*IQR] dihapus.
 
--   Proses: Menerapkan np.log1p() pada kolom Pregnancies, Insulin, DiabetesPedigreeFunction, dan Age.
+4. Transformasi Logaritmik (log1p)
+   Untuk mengurangi efek sebaran yang sangat lebar (skewed) dan memperhalus nilai ekstrem pada fitur tertentu, dilakukan transformasi logaritmik terhadap beberapa kolom, yaitu Insulin, DiabetesPedigreeFunction, Age, Pregnancies. Fungsi np.log1p() digunakan agar nilai nol tetap dapat diproses tanpa error, karena log1p(x) = log(1 + x).
 
--   Alasan: Untuk mengurangi skewness atau kemiringan distribusi data agar lebih mendekati distribusi normal, yang membantu algoritma logistic regression bekerja lebih optimal.
+5. Scaling dengan RobustScaler
+   Data kemudian dinormalisasi menggunakan RobustScaler dari sklearn, yang mentransformasi data berdasarkan median dan IQR. Teknik ini dipilih karena lebih tahan terhadap outlier dibandingkan scaler lain seperti StandardScaler atau MinMaxScaler.
 
-Feature Scaling dengan RobustScaler
-
--   Proses: Menerapkan RobustScaler untuk menyesuaikan semua fitur ke skala 0–1.
-
--   Alasan: Logistic regression sensitif terhadap skala fitur, sehingga normalisasi diperlukan agar fitur dengan rentang nilai besar tidak mendominasi model.
-
-Split Data
-
--   Proses: Dataset dibagi menjadi data pelatihan dan data pengujian menggunakan train_test_split.
-
--   Alasan: Untuk menghindari overfitting dan menilai performa model terhadap data yang belum pernah dilihat sebelumnya.
+6. Split Data (Train-Test Split)
+   Dataset dibagi menjadi data pelatihan dan data pengujian menggunakan train_test_split dari sklearn, biasanya dengan rasio 80:20. Tujuannya adalah untuk melatih model dan menguji performanya secara adil pada data yang belum pernah dilihat.
 
 ## Modeling
 
-Split Data:
+Pada tahap ini, dilakukan pemodelan menggunakan algoritma Logistic Regression yang disediakan oleh library scikit-learn. Logistic Regression dipilih karena cocok untuk permasalahan klasifikasi biner, dalam hal ini untuk memprediksi apakah seseorang berpotensi mengidap diabetes (Outcome = 1) atau tidak (Outcome = 0).
 
--   Data dibagi menjadi data latih dan data uji dengan rasio 80:20 menggunakan train_test_split dari scikit-learn.
+1. Penjelasan Algoritma
 
--   Tujuannya adalah untuk mengevaluasi performa model terhadap data yang tidak terlihat sebelumnya.
+Logistic Regression bekerja dengan cara:
 
-Pelatihan Model:
+-   Menghitung kombinasi linier dari fitur-fitur input, yaitu z=w0+w1x1+w2x2+⋯+wnxnz=w0​+w1​x1​+w2​x2​+⋯+wn​xn​
 
--   Model dilatih menggunakan LogisticRegression() dari library sklearn.linear_model.
+-   Mengaplikasikan fungsi sigmoid untuk mengubah hasil perhitungan menjadi probabilitas antara 0 dan 1:
+    P(y=1∣x)=1/(1+e−z1​)
+
+-   Klasifikasi berdasarkan threshold seperti Probabilitas ≥ 0.5 adalah kelas 1 dan Probabilitas < 0.5 adalah kelas 0. Namun dalam implementasi ini, model tidak langsung digunakan untuk klasifikasi. Sebagai gantinya, hasil probabilitas ditampilkan agar pengguna dapat melihat peluang persentase secara langsung.
+
+2. Inisialisasi Model
+   Model diinisialisasi menggunakan sintaks berikut:
+
+"from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()"
+
+Model menggunakan parameter default, dengan rincian sebagai berikut:
+
+-   penalty='l2': Menggunakan regularisasi L2 untuk mengurangi overfitting.
+
+-   C=1.0: Parameter pengatur kekuatan regularisasi (nilai yang lebih kecil menunjukkan regularisasi yang lebih kuat).
+
+-   solver='lbfgs': Algoritma optimasi default yang digunakan untuk dataset berukuran kecil hingga sedang.
+
+3. Pelatihan Model
+
+Setelah model dibuat, model dilatih menggunakan fungsi .fit() dengan dua parameter utama:
+
+-   X_train: Dataset input fitur, terdiri dari variabel numerik seperti Pregnancies, Glucose, BMI, Age, dll (kecuali Outcome).
+
+-   y_train: Dataset target atau label, yaitu kolom Outcome.
+
+Model kemudian siap digunakan untuk memprediksi probabilitas pada data uji menggunakan " model.fit(X_train, y_train) "
 
 ## Evaluation
 
@@ -177,9 +204,9 @@ mencoba input untuk prediksi:
 
 -   data 3: {'Pregnancies': 5, 'Glucose': 115, 'BloodPressure': 72, 'SkinThickness': 35, 'Insulin': 130, 'BMI': 36.2, 'DiabetesPedigreeFunction': 0.35, 'Age': 40},
 
--   data 4: {'Pregnancies': 0, 'Glucose': 92, 'BloodPressure': 60, 'SkinThickness': 28, 'Insulin': 0, 'BMI': 28.5, 'DiabetesPedigreeFunction': 0.2, 'Age': 19},
+-   data 4: {'Pregnancies': 0, 'Glucose': 92, 'BloodPressure': 60, 'SkinThickness': 28, 'Insulin': 0, 'BMI': 28.5, 'DiabetesPedigreeFunction': 2.2, 'Age': 19},
 
--   data 5: {'Pregnancies': 4, 'Glucose': 180, 'BloodPressure': 85, 'SkinThickness': 29, 'Insulin': 150, 'BMI': 34.3, 'DiabetesPedigreeFunction': 1.2, 'Age': 33},
+-   data 5: {'Pregnancies': 4, 'Glucose': 180, 'BloodPressure': 85, 'SkinThickness': 29, 'Insulin': 150, 'BMI': 34.3, 'DiabetesPedigreeFunction': 0.2, 'Age': 33},
 
 Hasil prediksi:
 
@@ -189,7 +216,8 @@ Hasil prediksi:
 
 -   Data ke-3 -> Probabilitas Tidak Diabetes (0): 56.93%, Diabetes (1): 43.07%
 
--   Data ke-4 -> Probabilitas Tidak Diabetes (0): 99.03%, Diabetes (1): 0.97%
+-   Data ke-4 -> Probabilitas Tidak Diabetes (0): 95.97%, Diabetes (1): 4.03%
 
--   Data ke-5 -> Probabilitas Tidak Diabetes (0): 13.32%, Diabetes (1): 86.68%
+-   Data ke-5 -> Probabilitas Tidak Diabetes (0): 27.45%, Diabetes (1): 72.55%
+
     **---Ini adalah bagian akhir laporan---**
