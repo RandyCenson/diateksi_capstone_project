@@ -1,0 +1,162 @@
+
+df_train = pd.read_csv('dataset/Training.csv')
+df_test = pd.read_csv('dataset/Testing.csv')
+df_eksternal = pd.read_csv('dataset/data2.csv')
+df_temp = pd.concat([df_train, df_test], ignore_index=True)
+df = pd.concat([df_temp, df_eksternal], ignore_index=True)
+df.info()
+# Replace zero with NaN in some columns
+cols_to_replace = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
+df[cols_to_replace] = df[cols_to_replace].replace(0, np.nan)
+df.isnull().sum()
+# metode interpolate
+df = df.interpolate(method='linear', limit_direction='both')
+print(df.isnull().sum())
+df.dropna(inplace=True)
+def remove_outliers_iqr(df, target_column=None):
+    if target_column:
+        features = df.drop(columns=[target_column])
+    else:
+        features = df.copy()
+        
+    Q1 = features.quantile(0.25)
+    Q3 = features.quantile(0.75)
+    IQR = Q3 - Q1
+
+    # Mask: data yang TIDAK outlier
+    mask = ~((features < (Q1 - 1.5 * IQR)) | (features > (Q3 + 1.5 * IQR))).any(axis=1)
+
+    # Gabungkan kembali kolom target kalau ada
+    if target_column:
+        return df.loc[mask]
+    else:
+        return features.loc[mask]
+# Feature and label
+X = df.drop("Outcome", axis=1)
+y = df["Outcome"]
+
+# Menggabungkan fitur dan target
+df_full = pd.concat([X, y], axis=1)
+
+# Hapus outlier
+df_no_outlier = remove_outliers_iqr(df_full, target_column="Outcome")
+
+# Pisahkan kembali
+X = df_no_outlier.drop("Outcome", axis=1)
+y = df_no_outlier["Outcome"]
+
+print(f"Data sebelum: {len(df_full)}")
+print(f"Data setelah hapus outlier: {len(df_no_outlier)}")
+# Log transform
+cols_to_log = ["Insulin", "DiabetesPedigreeFunction", "Age", "Pregnancies"]
+for col in cols_to_log:
+    X[col] = np.log1p(X[col])
+
+# Scaling
+scaler = RobustScaler()
+X_scaled = scaler.fit_transform(X)
+
+
+# Reshape for CNN: (samples, height, width, channels)
+n_features = X.shape[1]
+target_size = math.ceil(np.sqrt(n_features)) ** 2  # cari kuadrat sempurna terdekat
+padding_needed = target_size - n_features
+
+
+# Tambahkan kolom dummy
+for i in range(padding_needed):
+    X[f'dummy_{i}'] = 0
+
+# Normalisasi & reshape
+X_scaled = scaler.fit_transform(X)
+side_len = int(math.sqrt(target_size))  # sisi matriks (misal 3 utk 9 fitur)
+X_reshaped = X_scaled.reshape(-1, side_len, side_len, 1)
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X_reshaped, y, test_size=0.2, random_state=42)
+# Build CNN model
+model = Sequential([
+    InputLayer(input_shape=(side_len, side_len, 1)),
+    Conv2D(32, kernel_size=(2, 2), activation='relu'),
+    MaxPooling2D(pool_size=(1, 1)),
+    Flatten(),
+    Dense(64, activation='relu'),
+    Dropout(0.3),
+    Dense(1, activation='sigmoid')
+])
+
+early_stop = EarlyStopping(
+    monitor='val_accuracy',    
+    patience=5,             
+    restore_best_weights=True
+)
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+# Train model
+history = model.fit(
+    X_train, y_train,
+    epochs=100,
+    batch_size=16,
+    validation_split=0.2,
+    callbacks=[early_stop]
+)
+# Evaluate model
+y_pred_prob = model.predict(X_test)
+y_pred = (y_pred_prob > 0.4).astype(int)
+
+print("Akurasi:", accuracy_score(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+
+y_prob = model.predict(X_test).ravel()
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+roc_auc = auc(fpr, tpr)
+
+plt.figure()
+plt.plot(fpr, tpr, color='darkorange', label=f'ROC curve (area = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic')
+plt.legend()
+plt.grid()
+plt.show()
+model.save("saved_model/cnn_model.h5")
+joblib.dump(scaler, 'saved_model/cnn_scaler.pkl')
+
+model = load_model("saved_model/cnn_model.h5")
+scaler = joblib.load("saved_model/cnn_scaler.pkl")
+# Data input
+user_input = pd.DataFrame([
+    {'Pregnancies': 3, 'Glucose': 78, 'BloodPressure': 50, 'SkinThickness': 32, 'Insulin': 88, 'BMI': 31.0, 'DiabetesPedigreeFunction': 0.848, 'Age': 26},
+    {'Pregnancies': 1, 'Glucose': 165, 'BloodPressure': 69, 'SkinThickness': 8,  'Insulin': 68, 'BMI': 23.9, 'DiabetesPedigreeFunction': 0.66,  'Age': 22},
+    {'Pregnancies': 5, 'Glucose': 115, 'BloodPressure': 72, 'SkinThickness': 35, 'Insulin': 130, 'BMI': 36.2, 'DiabetesPedigreeFunction': 0.35, 'Age': 40},
+    {'Pregnancies': 9, 'Glucose': 120, 'BloodPressure': 72, 'SkinThickness': 22, 'Insulin': 56,  'BMI': 20.8, 'DiabetesPedigreeFunction': 0.733,   'Age': 48},
+    {'Pregnancies': 4, 'Glucose': 180, 'BloodPressure': 85, 'SkinThickness': 29, 'Insulin': 150, 'BMI': 34.3, 'DiabetesPedigreeFunction': 0.2, 'Age': 33},
+])
+
+# Transform log
+cols_to_log = ["Insulin", "DiabetesPedigreeFunction", "Age", "Pregnancies"]
+for col in cols_to_log:
+    user_input[col] = np.log1p(user_input[col])
+
+# Tambahkan dummy column agar jumlah fitur = 9 (sama seperti saat training)
+user_input['dummy_0'] = 0
+
+# Urutkan kolom agar sesuai dengan training
+ordered_columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin',
+                   'BMI', 'DiabetesPedigreeFunction', 'Age', 'dummy_0']
+user_input = user_input[ordered_columns]
+
+# Scaling
+user_input_scaled = scaler.transform(user_input)
+
+# Reshape ke format CNN
+user_input_reshaped = user_input_scaled.reshape(-1, 3, 3, 1)
+
+# Load dan prediksi
+
+predictions = model.predict(user_input_reshaped)
+
+# Tampilkan hasil
+for i, p in enumerate(predictions):
+    print(f"Data ke-{i+1} -> Probabilitas Diabetes: {p[0]*100:.2f}%")
