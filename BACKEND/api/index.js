@@ -1,20 +1,21 @@
-const connectDB = require('./connect');
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const serverless = require('serverless-http'); // WAJIB untuk Vercel Express
+const serverless = require('serverless-http');
 require('dotenv').config();
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error(err));
-const app = express();
-
+const connectDB = require('./connect');
 const authRoutes = require('./routes/auth');
 const checkRoutes = require('./routes/checks');
 
+const app = express();
 
+// Log semua request masuk
+app.use((req, res, next) => {
+  console.log('Incoming request from:', req.headers.origin || 'unknown origin');
+  next();
+});
 
+// Koneksi MongoDB (lazy connect, hanya connect saat pertama)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -25,34 +26,32 @@ app.use(async (req, res, next) => {
   }
 });
 
-const cors = require('cors');
-
+// Konfigurasi CORS
 const allowedOrigins = [
-  'http://localhost:3000', // Development
-  'https://diateksi-capstone-project.vercel.app', // Vercel API
-  'https://randycenson.github.io' // GitHub Pages frontend
+  'http://localhost:3000',
+  'https://diateksi-capstone-project.vercel.app',
+  'https://randycenson.github.io'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow non-browser tools
+    if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error('CORS not allowed from this origin'), false);
   }
 }));
 
-
 app.use(express.json());
+
+// Route test
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello from Vercel Serverless!' });
 });
+
+// Routes utama
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
-app.use((req, res, next) => {
-  console.log('Incoming request from:', req.headers.origin || 'unknown origin');
-  next();
-});
-// Jangan pakai app.listen(), ekspor sebagai handler
 
+// Export handler
 module.exports.handler = serverless(app);
 module.exports = app;
