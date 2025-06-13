@@ -28,7 +28,7 @@ exports.addCheck = async (req, res) => {
     console.log('Incoming req.body:', req.body);
 
     // Call the ML prediction API
-    const mlResponse = await axios.post('http://127.0.0.1:5000/predict', {
+    const mlResponse = await axios.post('https://vano00-diateksi.hf.space/predict', {
       Pregnancies,
       Glucose,
       BloodPressure,
