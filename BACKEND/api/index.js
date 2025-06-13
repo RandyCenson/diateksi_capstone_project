@@ -29,7 +29,8 @@ const cors = require('cors');
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://diateksi-capstone-project.vercel.app'
+  'https://diateksi-capstone-project.vercel.app',
+  'https://diateksi-capstone-project.vercel.app/api/auth/signup'
 ];
 
 app.use(cors({
@@ -42,7 +43,10 @@ app.get('/api', (req, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
-
+app.use((req, res, next) => {
+  console.log('Incoming request from:', req.headers.origin || 'unknown origin');
+  next();
+});
 // Jangan pakai app.listen(), ekspor sebagai handler
 
 module.exports.handler = serverless(app);
