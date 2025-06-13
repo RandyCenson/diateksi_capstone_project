@@ -42,4 +42,5 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
 
-module.exports.handler = serverless(app);
+module.exports = serverless(app);
+
