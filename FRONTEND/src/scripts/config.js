@@ -1,5 +1,5 @@
 const CONFIG = {
-  BASE_URL: 'http://localhost:7000/api',
+  BASE_URL: 'https://diateksi-capstone-project.vercel.app',
 };
 
 export default CONFIG;
