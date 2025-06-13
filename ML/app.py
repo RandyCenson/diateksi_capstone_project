@@ -17,7 +17,7 @@ LOG_COLS = ["Insulin", "DiabetesPedigreeFunction", "Age", "Pregnancies"]
 ORDERED_COLUMNS = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin',
                    'BMI', 'DiabetesPedigreeFunction', 'Age', 'dummy_0']
 
-app = Flask(__name__)
+app = Flask(name)
 CORS(app)
 
 @app.route('/predict', methods=['POST'])
@@ -46,15 +46,15 @@ def predict():
 
         # Prediksi
         prediction = model.predict(input_reshaped)[0][0]
-        
+      
         return jsonify({
             "prediction": int(prediction >= 0.5),
-            "risk_percentage": round(prediction * 100, 2)
+            "risk_percentage": f"{round(prediction * 100, 2)}%"
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-if __name__ == '__main__':
+if name == 'main':
     app.run(debug=True)
     handler = app
