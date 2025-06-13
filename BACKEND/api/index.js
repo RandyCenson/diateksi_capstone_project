@@ -28,7 +28,7 @@ app.use(async (req, res, next) => {
 const cors = require('cors');
 
 app.use(cors({
-  origin: "https://randycenson.github.io/", // GitHub Pages domain
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
