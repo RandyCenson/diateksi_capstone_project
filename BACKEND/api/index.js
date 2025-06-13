@@ -27,11 +27,20 @@ app.use(async (req, res, next) => {
 
 const cors = require('cors');
 
+const allowedOrigins = [
+  'http://localhost:3000', // Development
+  'https://diateksi-capstone-project.vercel.app', // Vercel API
+  'https://randycenson.github.io' // GitHub Pages frontend
+];
+
 app.use(cors({
-  origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow non-browser tools
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS not allowed from this origin'), false);
+  }
 }));
+
 
 app.use(express.json());
 app.get('/api', (req, res) => {
