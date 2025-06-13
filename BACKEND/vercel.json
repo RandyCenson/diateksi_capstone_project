@@ -3,12 +3,12 @@
   "builds": [
     {
       "src": "api/index.js",
-      "use": "@vercel/python"
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/.*",
+      "src": "/(.*)",
       "dest": "api/index.js"
     }
   ]
