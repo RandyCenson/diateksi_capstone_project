@@ -13,7 +13,11 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const checkRoutes = require('./routes/checks');
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:9000/', 'https://randycenson.github.io/diateksi_capstone_project/'],
+  credentials: true,
+}));
+
 app.use(express.json());
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello from Vercel Serverless!' });
