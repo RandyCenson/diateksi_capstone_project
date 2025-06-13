@@ -18,6 +18,10 @@ ORDERED_COLUMNS = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', '
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return 'API Diabetes is running. Use POST /predict with JSON input to get prediction.'
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
