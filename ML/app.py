@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import joblib
@@ -16,12 +17,8 @@ LOG_COLS = ["Insulin", "DiabetesPedigreeFunction", "Age", "Pregnancies"]
 ORDERED_COLUMNS = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin',
                    'BMI', 'DiabetesPedigreeFunction', 'Age', 'dummy_0']
 
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "API is up and running!"
-
+app = Flask(name)
+CORS(app)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -49,15 +46,15 @@ def predict():
 
         # Prediksi
         prediction = model.predict(input_reshaped)[0][0]
-        
+      
         return jsonify({
             "prediction": int(prediction >= 0.5),
-            "risk_percentage": float(round(prediction * 100, 2))
+            "risk_percentage": f"{round(prediction * 100, 2)}%"
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-if __name__ == '__main__':
+if name == 'main':
     app.run(debug=True)
     handler = app
