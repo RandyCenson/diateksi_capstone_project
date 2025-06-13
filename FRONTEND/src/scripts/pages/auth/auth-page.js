@@ -904,7 +904,7 @@ export default class HistoryPage {
               alert(response.message || 'Login failed');
             }
           } catch (err) {
-            alert('Server error. Please try again later.');
+            alert('Server error8. Please try again later.');
           }
         });
       }
@@ -935,7 +935,7 @@ export default class HistoryPage {
               alert(response.message || 'Sign up failed');
             }
           } catch (err) {
-            alert('Server error. Please try again later.');
+            alert('Server error9. Please try again later.');
           }
           
         });
