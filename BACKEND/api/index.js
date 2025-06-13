@@ -28,8 +28,6 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
 
-// Jangan pakai app.listen(), ekspor sebagai handler
-
 module.exports.handler = serverless(app);
 module.exports = app;
 

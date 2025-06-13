@@ -8,7 +8,7 @@ exports.getAllChecks = async (req, res) => {
     res.json(checks);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).send('Server error3');
   }
 };
 
@@ -74,9 +74,9 @@ exports.addCheck = async (req, res) => {
     } else if (err.request) {
       console.error('ML API no response:', err.request);
     } else {
-      console.error('Server error:', err.message || err);
+      console.error('Server error4:', err.message || err);
     }
-    res.status(500).send('Server error');
+    res.status(500).send('Server error5');
   }
 };
 
@@ -86,7 +86,7 @@ exports.deleteAllChecks = async (req, res) => {
     res.json({ msg: 'All checks deleted' });
   } catch (err) {
     console.error("ML prediction or DB save error:", err.response?.data || err.message || err);
-    res.status(500).send('Server error');
+    res.status(500).send('Server error6');
   }
 };
 
