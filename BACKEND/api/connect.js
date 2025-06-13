@@ -1,15 +1,22 @@
 const mongoose = require('mongoose');
 
-const MONGO_URI = process.env.MONGO_URI;
+let isConnected = false;
 
-if (!MONGO_URI) {
-  throw new Error('MONGO_URI belum disetel di file .env');
-}
+const connectDB = async () => {
+  if (isConnected) return;
 
-mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 10000, // tambahkan batas waktu 10s
+    });
+    isConnected = true;
+    console.log('✅ MongoDB connected');
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err.message);
+    throw err;
+  }
+};
+
+module.exports = connectDB;
