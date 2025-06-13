@@ -3,13 +3,15 @@ const cors = require('cors');
 const serverless = require('serverless-http');
 require('dotenv').config();
 
-const connectDB = require('./connect'); // karena connect.js ada di folder yg sama
+const connectDB = require('./connect');
 const authRoutes = require('./routes/auth');
 const checkRoutes = require('./routes/checks');
 
-connectDB(); // Inisialisasi koneksi MongoDB
-
 const app = express();
+
+(async () => {
+  await connectDB(); // Tunggu sampai terkoneksi baru lanjut
+})();
 
 app.use(cors());
 app.use(express.json());
