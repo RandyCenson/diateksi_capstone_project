@@ -3,11 +3,11 @@ const cors = require('cors');
 const serverless = require('serverless-http');
 require('dotenv').config();
 
-const connectDB = require('../connect'); // Menggunakan koneksi MongoDB
-const authRoutes = require('../routes/auth');
-const checkRoutes = require('../routes/checks');
+const connectDB = require('./connect'); // karena connect.js ada di folder yg sama
+const authRoutes = require('./routes/auth');
+const checkRoutes = require('./routes/checks');
 
-connectDB(); // Panggil koneksi
+connectDB(); // Inisialisasi koneksi MongoDB
 
 const app = express();
 
@@ -21,5 +21,4 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
 
-// Untuk Vercel, hanya ekspor handler
 module.exports.handler = serverless(app);
