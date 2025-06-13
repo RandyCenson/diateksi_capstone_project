@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import joblib
@@ -17,6 +18,7 @@ ORDERED_COLUMNS = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', '
                    'BMI', 'DiabetesPedigreeFunction', 'Age', 'dummy_0']
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
