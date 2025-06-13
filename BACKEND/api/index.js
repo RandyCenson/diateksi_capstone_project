@@ -30,7 +30,8 @@ const cors = require('cors');
 const allowedOrigins = [
   'http://localhost:3000',
   'https://diateksi-capstone-project.vercel.app',
-  'https://diateksi-capstone-project.vercel.app/api/auth/signup'
+  'https://diateksi-capstone-project.vercel.app/api/auth/signup',
+  'https://randycenson.github.io/diateksi_capstone_project/',
 ];
 
 app.use(cors({
