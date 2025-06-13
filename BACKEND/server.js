@@ -9,13 +9,10 @@ const checkRoutes = require('./api/routes/checks');
 
 const cors = require('cors');
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://diateksi-capstone-project.vercel.app'
-];
-
 app.use(cors({
-  origin: allowedOrigins
+  origin: "https://randycenson.github.io/", // GitHub Pages domain
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 
 app.use(express.json());
