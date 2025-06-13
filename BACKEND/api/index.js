@@ -12,11 +12,13 @@ const app = express();
 // Konfigurasi CORS agar bisa diakses dari frontend
 const corsOptions = {
   origin: [
-    'http://localhost:9000',                      // saat development
-    'https://diateksi-capstone-project.vercel.app' // domain Vercel frontend
-  ],
+    'http://localhost:9000',
+    'https://diateksi-capstone-project.vercel.app',
+    process.env.ALLOWED_ORIGIN, // Tambahkan env sebagai opsi
+  ].filter(Boolean), // Filter untuk menghapus nilai undefined
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
