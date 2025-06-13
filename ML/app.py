@@ -20,6 +20,11 @@ ORDERED_COLUMNS = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', '
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def home():
+    return "API is up and running!"
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -49,12 +54,11 @@ def predict():
         
         return jsonify({
             "prediction": int(prediction >= 0.5),
-            "risk_percentage": round(prediction * 100, 2)
+            "risk_percentage": float(round(prediction * 100, 2))
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    handler = app
+    app.run(host='0.0.0.0', port=7860)
