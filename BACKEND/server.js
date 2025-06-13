@@ -7,7 +7,21 @@ const app = express();
 const authRoutes = require('./api/routes/auth');
 const checkRoutes = require('./api/routes/checks');
 
-app.use(cors());
+const cors = require('cors');
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://diateksi-capstone-project.vercel.app'
+];
+
+app.use(cors({
+  origin: allowedOrigins
+}));
+
+app.use(express.json());
+app.get('/api', (req, res) => {
+  res.json({ message: 'Hello from Vercel Serverless!' });
+});
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
