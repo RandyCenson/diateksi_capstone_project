@@ -1,4 +1,4 @@
-
+const connectDB = require('./connect');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -12,6 +12,18 @@ const app = express();
 
 const authRoutes = require('./routes/auth');
 const checkRoutes = require('./routes/checks');
+
+
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('❌ DB Connect Middleware Error:', err.message);
+    res.status(500).json({ message: 'Failed to connect to DB' });
+  }
+});
 
 app.use(cors());
 app.use(express.json());
