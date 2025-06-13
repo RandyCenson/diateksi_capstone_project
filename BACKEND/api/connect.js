@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
 
-console.log('⛳ MONGODB_URI:', process.env.MONGODB_URI); // Cek ini di logs Vercel
+const MONGO_URI = process.env.MONGO_URI;
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ MongoDB connected');
-  } catch (err) {
-    console.error('❌ MongoDB connection failed:', err.message);
-    throw err; // pastikan error dilempar agar serverless function tidak lanjut
-  }
-};
+if (!MONGO_URI) {
+  throw new Error('MONGO_URI belum disetel di file .env');
+}
 
-module.exports = connectDB;
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
