@@ -16,6 +16,7 @@ export async function signUp(email, password) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
+    credentials: "include",
   });
   return res.json();
 }
