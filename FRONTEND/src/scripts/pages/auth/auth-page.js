@@ -935,7 +935,8 @@ export default class HistoryPage {
               alert(response.message || 'Sign up failed');
             }
           } catch (err) {
-            alert('Server error9. Please try again later.');
+            console.error('Signup Error:', err);
+            alert('Server error9. Please try again later.', err);
           }
           
         });
