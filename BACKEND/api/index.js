@@ -23,7 +23,7 @@ const checkRoutes = require('./routes/checks');
 app.use(cors());
 app.use(express.json());
 app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from Vercel Serverless!' });
+  res.json({ message: 'Hello from Vercel Serverless update err msg!' });
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
