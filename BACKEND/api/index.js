@@ -16,11 +16,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ message: 'Hello from Vercel Serverless!' });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/checks', checkRoutes);
+app.use('/auth', authRoutes);
+app.use('/checks', checkRoutes);
 
 module.exports.handler = serverless(app);
