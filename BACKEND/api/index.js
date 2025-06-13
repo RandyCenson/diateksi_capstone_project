@@ -9,12 +9,14 @@ const checkRoutes = require('./routes/checks');
 
 const app = express();
 
-(async () => {
-  await connectDB(); // Tunggu sampai terkoneksi baru lanjut
-})();
-
 app.use(cors());
 app.use(express.json());
+
+// Middleware koneksi DB sebelum request dilayani
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 app.get('/', (req, res) => {
   res.json({ message: 'Hello from Vercel Serverless!' });
