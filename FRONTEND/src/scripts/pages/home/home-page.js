@@ -470,8 +470,8 @@ export default class HomePage {
       
         const response = await addCheck(data); // Panggil API Anda
         alert(`Prediksi berhasil!`);
-        const clean_response = parseFloat(response.risk_percentage).toFixed(2);
-        showRiskResult(clean_response);
+        response= parseFloat(response.risk_percentage).toFixed(2);
+        showRiskResult(response);
         // form.reset();
       } catch (error) {
         console.error(error);
