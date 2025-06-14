@@ -40,7 +40,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({ message: 'Hello dari serverless!' });
 });
 
