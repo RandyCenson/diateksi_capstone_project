@@ -473,7 +473,7 @@ export default class HomePage {
         // form.reset();
       } catch (error) {
         console.error(error);
-        alert('Terjadi kesalahan saat mengirim data.');
+        alert('Terjadi kesalahan saat mengirim dataa.');
       }
       
     });
