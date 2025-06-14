@@ -40,8 +40,8 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'API up and running' });
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello dari serverless!' });
 });
 
 app.use('/api/auth', authRoutes);
