@@ -224,7 +224,7 @@ export default class HomePage {
                           min="10"
                           max="300"
                           required
-                          placeholder="99"
+                          placeholder="100"
                           class="form-input"
                         />
                         <span class="field-unit">mg/dL</span>
