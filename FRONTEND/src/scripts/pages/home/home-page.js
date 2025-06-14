@@ -229,7 +229,7 @@ export default class HomePage {
                         />
                         <span class="field-unit">mg/dL</span>
                       </div>
-                      <p class="field-help-text">Normal: 70-99 mg/dL (puasa)</p>
+                      <p class="field-help-text">Normal: 70-99 mg/dL (setelah makan)</p>
                     </div>
                     
                     <div class="form-group">
@@ -333,7 +333,7 @@ export default class HomePage {
                         />
                         <span class="field-unit">μU/mL</span>
                       </div>
-                      <p class="field-help-text">Normal: 60-90 μU/mL (tanpa puasa)</p>
+                      <p class="field-help-text">Normal: 60-90 μU/mL (setelah makan)</p>
                     </div>
                     
   
