@@ -467,7 +467,7 @@ export default class HomePage {
           alert("Login dahulu untuk mengecek");
           return;
         }
-        const temp = 0;
+        let temp = 0;
         const response = await addCheck(data); // Panggil API Anda
         alert(`Prediksi berhasil!!`);
         temp = parseFloat(response.risk_percentage).toFixed(2) + "%";
