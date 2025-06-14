@@ -41,7 +41,7 @@ app.use(async (req, res, next) => {
 });
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Hello dari serverless!' });
+  res.json({ message: 'Hello from Vercel Serverless update err msg!' });
 });
 
 app.use('/api/auth', authRoutes);
