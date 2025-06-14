@@ -145,7 +145,7 @@ export default class HomePage {
                           type="number"
                           name="diabetesPedigree"
                           min="0"
-                          max="2"
+                          max="10"
                           value="0"
                           step="0.01"
                           placeholder="0"
@@ -167,10 +167,10 @@ export default class HomePage {
                           type="number"
                           name="bmi"
                           min="10"
-                          max="100"
+                          max="200"
                           required
                           step="0.01"
-                          placeholder="0"
+                          placeholder="berat badan/(tinggi badan(m))²"
                           class="form-input"
                         />
                         <span class="field-unit">kg/m2</span>
@@ -221,7 +221,7 @@ export default class HomePage {
                         <input
                           type="number"
                           name="glucose"
-                          min="70"
+                          min="10"
                           max="300"
                           required
                           placeholder="99"
@@ -256,8 +256,8 @@ export default class HomePage {
                         <input
                           type="number"
                           name="bloodPressure"
-                          min="80"
-                          max="200"
+                          min="40"
+                          max="250"
                           required
                           placeholder="120"
                           class="form-input"
@@ -309,7 +309,7 @@ export default class HomePage {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="help-icon"
-                          title="Insulin serum 2 jam setelah makan"
+                          title="Insulin serum 1-2 jam setelah makan"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -328,12 +328,12 @@ export default class HomePage {
                           min="0"
                           max="846"
                           required
-                          placeholder="79"
+                          placeholder="100"
                           class="form-input"
                         />
                         <span class="field-unit">μU/mL</span>
                       </div>
-                      <p class="field-help-text">Normal: 2.6-24.9 μU/mL (puasa)</p>
+                      <p class="field-help-text">Normal: 60-90 μU/mL (tanpa puasa)</p>
                     </div>
                     
   
@@ -470,7 +470,8 @@ export default class HomePage {
       
         const response = await addCheck(data); // Panggil API Anda
         alert(`Prediksi berhasil!`);
-        showRiskResult(response);
+        clean_response = parseFloat(response.risk_percentage).toFixed(2);
+        showRiskResult(clean_response);
         // form.reset();
       } catch (error) {
         console.error(error);
