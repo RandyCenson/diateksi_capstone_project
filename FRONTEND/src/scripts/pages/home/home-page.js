@@ -469,7 +469,7 @@ export default class HomePage {
         }
       
         const response = await addCheck(data); // Panggil API Anda
-        alert(`Prediksi berhasil!`);
+        alert(`Prediksi berhasil!!`);
         response= parseFloat(response.risk_percentage).toFixed(2);
         showRiskResult(response);
         // form.reset();
