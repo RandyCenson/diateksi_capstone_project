@@ -467,11 +467,12 @@ export default class HomePage {
           alert("Login dahulu untuk mengecek");
           return;
         }
-        let temp = 0;
-        const response = await addCheck(data); // Panggil API Anda
-        alert(`Prediksi berhasil!!`);
-        temp = parseFloat(response.risk_percentage).toFixed(2) + "%";
-        showRiskResult(temp);
+        const response = await addCheck(data);
+        alert('Prediksi berhasil!!');
+
+        const formattedRisk = parseFloat(response.risk_percentage).toFixed(2) + "%";
+        showRiskResult(formattedRisk);
+
         // form.reset();
       } catch (error) {
         console.error(error);
