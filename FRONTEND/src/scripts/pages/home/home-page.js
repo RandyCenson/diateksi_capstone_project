@@ -1,6 +1,6 @@
 import { addCheck } from '../../data/api.js'; // pastikan ini tersedia
 import { showRiskResult } from './home-presenter.js';
-let temp = 0;
+
 export default class HomePage {
   async render() {
     return `
@@ -467,11 +467,9 @@ export default class HomePage {
           alert("Login dahulu untuk mengecek");
           return;
         }
-        
         const response = await addCheck(data); // Panggil API Anda
         alert(`Prediksi berhasil!!`);
-        temp = parseFloat(response.risk_percentage).toFixed(2) + "%";
-        showRiskResult(temp);
+        showRiskResult(response);
         // form.reset();
       } catch (error) {
         console.error(error);
